@@ -170,6 +170,9 @@ function getVerbRoot(word: string): string {
     w === "being"
   )
     return "be";
+  // Handle "come" conjugations
+  if (w === "came") return "come";
+  if (w === "coming") return "come";
   // Regular endings
   if (w.endsWith("ing")) return w.slice(0, -3);
   if (w.endsWith("ed") && w !== "liked" && w !== "lived") return w.slice(0, -2);
