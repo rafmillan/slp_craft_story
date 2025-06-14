@@ -227,6 +227,7 @@ export default function Home() {
   const [userDict, setUserDict] = useState<string[]>([]);
   let search_index = 0;
   let num_found = 0;
+  const discarded: string[] = [];
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-6">
       <div className="max-w-2xl w-full space-y-4">
@@ -309,6 +310,29 @@ export default function Home() {
               <div className="">
                 <h2 className="text-2xl font-bold mb-4">Your Words</h2>
                 <div className="grid grid-cols-1 gap-4">
+                  {userDict.map((userWord) => {
+                    let matched = false;
+                    let normalizedUserWord = normalizeWord(userWord);
+                    if (isVerb(userWord)) {
+                      normalizedUserWord = getVerbRoot(userWord);
+                    }
+                    for (let i = 0; i < words.length; i++) {
+                      const word = words[i];
+                      let normalizedWord = normalizeWord(word);
+                      if (isVerb(word)) {
+                        normalizedWord = getVerbRoot(word);
+                      }
+                      if (normalizedUserWord === normalizedWord) {
+                        matched = true;
+                        break;
+                      }
+                    }
+                    if (!matched) {
+                      discarded.push(userWord);
+                    }
+                    return null; // This loop is only for populating discarded
+                  })}
+
                   {words.map((word, index) => {
                     let found = false;
                     let _word = normalizeWord(word);
@@ -355,6 +379,14 @@ export default function Home() {
                 </div>
               </div>
             </div>
+            {discarded.length > 0 && (
+              <div className="mt-6">
+                <h3 className="text-lg font-semibold mb-2">Discarded Words</h3>
+                <div className="">
+                  {discarded.join(", ")}
+                </div>
+              </div>
+            )}
           </div>
         </div>
         <div className="text-blue-700 font-semibold text-3xl justify-center text-center">
